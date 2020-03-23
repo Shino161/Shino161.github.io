@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="这个问题的本质实际上是从浏览器的渲染流程和机制的体现   浏览器渲染过程抛开浏览器发出请求拿到页面的过程，浏览器渲染大致可以分为以下几个过程：  解析html建立dom树 解析css构建render树（将CSS代码解析成树形的数据结构，然后结合DOM合并成render树） 布局render树（Layout/reflow），负责各元素尺寸、位置的计算 绘制render树（paint），绘制页面像素信">
+<meta name="keywords" content="前端,CSS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="为什么使用 translate 来改变元素位置">
+<meta property="og:url" content="cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/index.html">
+<meta property="og:site_name" content="Shino161">
+<meta property="og:description" content="这个问题的本质实际上是从浏览器的渲染流程和机制的体现   浏览器渲染过程抛开浏览器发出请求拿到页面的过程，浏览器渲染大致可以分为以下几个过程：  解析html建立dom树 解析css构建render树（将CSS代码解析成树形的数据结构，然后结合DOM合并成render树） 布局render树（Layout/reflow），负责各元素尺寸、位置的计算 绘制render树（paint），绘制页面像素信">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-11-12T06:02:42.357Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="为什么使用 translate 来改变元素位置">
+<meta name="twitter:description" content="这个问题的本质实际上是从浏览器的渲染流程和机制的体现   浏览器渲染过程抛开浏览器发出请求拿到页面的过程，浏览器渲染大致可以分为以下几个过程：  解析html建立dom树 解析css构建render树（将CSS代码解析成树形的数据结构，然后结合DOM合并成render树） 布局render树（Layout/reflow），负责各元素尺寸、位置的计算 绘制render树（paint），绘制页面像素信">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>为什么使用 translate 来改变元素位置</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/Shino161">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/11/14/服务端高并发分布式架构演进之路/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/11/08/V8-引擎怎么跑起来的/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/&text=为什么使用 translate 来改变元素位置"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/&title=为什么使用 translate 来改变元素位置"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/&is_video=false&description=为什么使用 translate 来改变元素位置"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=为什么使用 translate 来改变元素位置&body=Check out this article: cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/&title=为什么使用 translate 来改变元素位置"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/&title=为什么使用 translate 来改变元素位置"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/&title=为什么使用 translate 来改变元素位置"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/&title=为什么使用 translate 来改变元素位置"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/&name=为什么使用 translate 来改变元素位置&description=&lt;p&gt;这个问题的本质实际上是从浏览器的渲染流程和机制的体现  &lt;/p&gt;
+&lt;h1 id=&#34;浏览器渲染过程&#34;&gt;&lt;a href=&#34;#浏览器渲染过程&#34; class=&#34;headerlink&#34; title=&#34;浏览器渲染过程&#34;&gt;&lt;/a&gt;浏览器渲染过程&lt;/h1&gt;&lt;p&gt;抛开浏览器发出请求拿到页面的过程，浏览器渲染大致可以分为以下几个过程：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;解析html建立dom树&lt;/li&gt;
+&lt;li&gt;解析css构建render树（将CSS代码解析成树形的数据结构，然后结合DOM合并成render树）&lt;/li&gt;
+&lt;li&gt;布局render树（Layout/reflow），负责各元素尺寸、位置的计算&lt;/li&gt;
+&lt;li&gt;绘制render树（paint），绘制页面像素信息&lt;/li&gt;
+&lt;li&gt;浏览器会将各层的信息发送给GPU（GPU进程：最多一个，用于3D绘制等），GPU会将各层合成（composite），显示在屏幕上。"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/&t=为什么使用 translate 来改变元素位置"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#浏览器渲染过程"><span class="toc-number">1.</span> <span class="toc-text">浏览器渲染过程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#重绘（repaint）与回流（reflow）"><span class="toc-number">2.</span> <span class="toc-text">重绘（repaint）与回流（reflow）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#渲染层合并（composite）"><span class="toc-number">3.</span> <span class="toc-text">渲染层合并（composite）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#对于-translate-来说"><span class="toc-number">4.</span> <span class="toc-text">对于 translate 来说</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        为什么使用 translate 来改变元素位置
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Shino161</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-11-12T05:25:42.000Z" itemprop="datePublished">2019-11-12</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/CSS/">CSS</a>, <a class="tag-link" href="/tags/前端/">前端</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>这个问题的本质实际上是从浏览器的渲染流程和机制的体现  </p>
+<h1 id="浏览器渲染过程"><a href="#浏览器渲染过程" class="headerlink" title="浏览器渲染过程"></a>浏览器渲染过程</h1><p>抛开浏览器发出请求拿到页面的过程，浏览器渲染大致可以分为以下几个过程：</p>
+<ul>
+<li>解析html建立dom树</li>
+<li>解析css构建render树（将CSS代码解析成树形的数据结构，然后结合DOM合并成render树）</li>
+<li>布局render树（Layout/reflow），负责各元素尺寸、位置的计算</li>
+<li>绘制render树（paint），绘制页面像素信息</li>
+<li>浏览器会将各层的信息发送给GPU（GPU进程：最多一个，用于3D绘制等），GPU会将各层合成（composite），显示在屏幕上。  <a id="more"></a>
+<h1 id="重绘（repaint）与回流（reflow）"><a href="#重绘（repaint）与回流（reflow）" class="headerlink" title="重绘（repaint）与回流（reflow）"></a>重绘（repaint）与回流（reflow）</h1>这里引用一篇文章来解释浏览器的重绘和回流 <a href="https://juejin.im/post/5a9923e9518825558251c96a" target="_blank" rel="noopener">https://juejin.im/post/5a9923e9518825558251c96a</a></li>
+</ul>
+<h1 id="渲染层合并（composite）"><a href="#渲染层合并（composite）" class="headerlink" title="渲染层合并（composite）"></a>渲染层合并（composite）</h1><p><a href="https://segmentfault.com/a/1190000014520786" target="_blank" rel="noopener">https://segmentfault.com/a/1190000014520786</a>  </p>
+<h1 id="对于-translate-来说"><a href="#对于-translate-来说" class="headerlink" title="对于 translate 来说"></a>对于 translate 来说</h1><p>translate 是 transform 的一条属性，改变 transform 并不会出发浏览器的重绘或者回流，只会将触发合成（composite）操作，<br>合成操作将由 GPU 处理。而改变绝对定位，会触发重绘操作，而且将由 CPU 进行处理。因此相比之下，使用 translate 更加高效。  </p>
+<blockquote>
+<p>其实继续深挖知识点，是浏览器渲染的机制。比如添加 translateZ(0) 来将渲染层提升为合成层以获取更加好的动态效果</p>
+</blockquote>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/Shino161">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#浏览器渲染过程"><span class="toc-number">1.</span> <span class="toc-text">浏览器渲染过程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#重绘（repaint）与回流（reflow）"><span class="toc-number">2.</span> <span class="toc-text">重绘（repaint）与回流（reflow）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#渲染层合并（composite）"><span class="toc-number">3.</span> <span class="toc-text">渲染层合并（composite）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#对于-translate-来说"><span class="toc-number">4.</span> <span class="toc-text">对于 translate 来说</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/&text=为什么使用 translate 来改变元素位置"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/&title=为什么使用 translate 来改变元素位置"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/&is_video=false&description=为什么使用 translate 来改变元素位置"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=为什么使用 translate 来改变元素位置&body=Check out this article: cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/&title=为什么使用 translate 来改变元素位置"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/&title=为什么使用 translate 来改变元素位置"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/&title=为什么使用 translate 来改变元素位置"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/&title=为什么使用 translate 来改变元素位置"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/&name=为什么使用 translate 来改变元素位置&description=&lt;p&gt;这个问题的本质实际上是从浏览器的渲染流程和机制的体现  &lt;/p&gt;
+&lt;h1 id=&#34;浏览器渲染过程&#34;&gt;&lt;a href=&#34;#浏览器渲染过程&#34; class=&#34;headerlink&#34; title=&#34;浏览器渲染过程&#34;&gt;&lt;/a&gt;浏览器渲染过程&lt;/h1&gt;&lt;p&gt;抛开浏览器发出请求拿到页面的过程，浏览器渲染大致可以分为以下几个过程：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;解析html建立dom树&lt;/li&gt;
+&lt;li&gt;解析css构建render树（将CSS代码解析成树形的数据结构，然后结合DOM合并成render树）&lt;/li&gt;
+&lt;li&gt;布局render树（Layout/reflow），负责各元素尺寸、位置的计算&lt;/li&gt;
+&lt;li&gt;绘制render树（paint），绘制页面像素信息&lt;/li&gt;
+&lt;li&gt;浏览器会将各层的信息发送给GPU（GPU进程：最多一个，用于3D绘制等），GPU会将各层合成（composite），显示在屏幕上。"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=cocoiii.com/2019/11/12/为什么使用translate来改变元素位置/&t=为什么使用 translate 来改变元素位置"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Shino161
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/Shino161">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

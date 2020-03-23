@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="归纳一下 MDN 上关于 HTTP 缓存的理解 https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Caching_FAQ    定义重用已获取的资源能够有效的提升网站与应用的性能。Web 缓存能够减少延迟与网络阻塞，进而减少显示某个资源所用的时间。借助 HTTP 缓存，Web 站点变得更具有响应性。 私有缓存（浏览器缓存）私有缓存只能用于单独用户">
+<meta name="keywords" content="前端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTTP 缓存">
+<meta property="og:url" content="cocoiii.com/2019/11/29/HTTP-缓存/index.html">
+<meta property="og:site_name" content="Shino161">
+<meta property="og:description" content="归纳一下 MDN 上关于 HTTP 缓存的理解 https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Caching_FAQ    定义重用已获取的资源能够有效的提升网站与应用的性能。Web 缓存能够减少延迟与网络阻塞，进而减少显示某个资源所用的时间。借助 HTTP 缓存，Web 站点变得更具有响应性。 私有缓存（浏览器缓存）私有缓存只能用于单独用户">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-12-02T06:57:11.170Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HTTP 缓存">
+<meta name="twitter:description" content="归纳一下 MDN 上关于 HTTP 缓存的理解 https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Caching_FAQ    定义重用已获取的资源能够有效的提升网站与应用的性能。Web 缓存能够减少延迟与网络阻塞，进而减少显示某个资源所用的时间。借助 HTTP 缓存，Web 站点变得更具有响应性。 私有缓存（浏览器缓存）私有缓存只能用于单独用户">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>HTTP 缓存</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/Shino161">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/12/23/Get和Post请求区别/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/11/14/服务端高并发分布式架构演进之路/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=cocoiii.com/2019/11/29/HTTP-缓存/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=cocoiii.com/2019/11/29/HTTP-缓存/&text=HTTP 缓存"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=cocoiii.com/2019/11/29/HTTP-缓存/&title=HTTP 缓存"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=cocoiii.com/2019/11/29/HTTP-缓存/&is_video=false&description=HTTP 缓存"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HTTP 缓存&body=Check out this article: cocoiii.com/2019/11/29/HTTP-缓存/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=cocoiii.com/2019/11/29/HTTP-缓存/&title=HTTP 缓存"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=cocoiii.com/2019/11/29/HTTP-缓存/&title=HTTP 缓存"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=cocoiii.com/2019/11/29/HTTP-缓存/&title=HTTP 缓存"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=cocoiii.com/2019/11/29/HTTP-缓存/&title=HTTP 缓存"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=cocoiii.com/2019/11/29/HTTP-缓存/&name=HTTP 缓存&description=&lt;blockquote&gt;
+&lt;p&gt;归纳一下 MDN 上关于 HTTP 缓存的理解 &lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Caching_FAQ&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Caching_FAQ&lt;/a&gt;  &lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;定义&#34;&gt;&lt;a href=&#34;#定义&#34; class=&#34;headerlink&#34; title=&#34;定义&#34;&gt;&lt;/a&gt;定义&lt;/h2&gt;&lt;p&gt;重用已获取的资源能够有效的提升网站与应用的性能。Web 缓存能够减少延迟与网络阻塞，进而减少显示某个资源所用的时间。借助 HTTP 缓存，Web 站点变得更具有响应性。&lt;/p&gt;
+&lt;h3 id=&#34;私有缓存（浏览器缓存）&#34;&gt;&lt;a href=&#34;#私有缓存（浏览器缓存）&#34; class=&#34;headerlink&#34; title=&#34;私有缓存（浏览器缓存）&#34;&gt;&lt;/a&gt;私有缓存（浏览器缓存）&lt;/h3&gt;&lt;p&gt;私有缓存只能用于单独用户。浏览器缓存拥有用户通过 HTTP 下载的所有文档。这些缓存为浏览过的文档提供向后/向前导航，保存网页，查看源码等功能，可以避免再次向服务器发起多余的请求&lt;/p&gt;
+&lt;h3 id=&#34;共享缓存（代理缓存）&#34;&gt;&lt;a href=&#34;#共享缓存（代理缓存）&#34; class=&#34;headerlink&#34; title=&#34;共享缓存（代理缓存）&#34;&gt;&lt;/a&gt;共享缓存（代理缓存）&lt;/h3&gt;&lt;p&gt;共享缓存可以被多个用户使用。例如，ISP 或你所在的公司可能会架设一个 web 代理来作为本地网络基础的一部分提供给用户。&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=cocoiii.com/2019/11/29/HTTP-缓存/&t=HTTP 缓存"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#定义"><span class="toc-number">1.</span> <span class="toc-text">定义</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#私有缓存（浏览器缓存）"><span class="toc-number">1.1.</span> <span class="toc-text">私有缓存（浏览器缓存）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#共享缓存（代理缓存）"><span class="toc-number">1.2.</span> <span class="toc-text">共享缓存（代理缓存）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#缓存操作目标"><span class="toc-number">2.</span> <span class="toc-text">缓存操作目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#缓存控制"><span class="toc-number">3.</span> <span class="toc-text">缓存控制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#缓存过期"><span class="toc-number">4.</span> <span class="toc-text">缓存过期</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#缓存验证"><span class="toc-number">5.</span> <span class="toc-text">缓存验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#带Vary头的响应"><span class="toc-number">6.</span> <span class="toc-text">带Vary头的响应</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        HTTP 缓存
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Shino161</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-11-29T06:57:14.000Z" itemprop="datePublished">2019-11-29</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/前端/">前端</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <blockquote>
+<p>归纳一下 MDN 上关于 HTTP 缓存的理解 <a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Caching_FAQ" target="_blank" rel="noopener">https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Caching_FAQ</a>  </p>
+</blockquote>
+<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>重用已获取的资源能够有效的提升网站与应用的性能。Web 缓存能够减少延迟与网络阻塞，进而减少显示某个资源所用的时间。借助 HTTP 缓存，Web 站点变得更具有响应性。</p>
+<h3 id="私有缓存（浏览器缓存）"><a href="#私有缓存（浏览器缓存）" class="headerlink" title="私有缓存（浏览器缓存）"></a>私有缓存（浏览器缓存）</h3><p>私有缓存只能用于单独用户。浏览器缓存拥有用户通过 HTTP 下载的所有文档。这些缓存为浏览过的文档提供向后/向前导航，保存网页，查看源码等功能，可以避免再次向服务器发起多余的请求</p>
+<h3 id="共享缓存（代理缓存）"><a href="#共享缓存（代理缓存）" class="headerlink" title="共享缓存（代理缓存）"></a>共享缓存（代理缓存）</h3><p>共享缓存可以被多个用户使用。例如，ISP 或你所在的公司可能会架设一个 web 代理来作为本地网络基础的一部分提供给用户。</p>
+<a id="more"></a>
+<h2 id="缓存操作目标"><a href="#缓存操作目标" class="headerlink" title="缓存操作目标"></a>缓存操作目标</h2><p>常见的 HTTP 缓存只能存储 GET 响应，对于其他类型的响应则无能为力。缓存的关键主要包括request method和目标URI（一般只有GET请求才会被缓存）。 </p>
+<ul>
+<li>一个检索请求的成功响应: 对于 GET请求，响应状态码为：200，则表示为成功。一个包含例如HTML文档，图片，或者文件的响应。</li>
+<li>永久重定向: 响应状态码：301。</li>
+<li>错误响应: 响应状态码：404 的一个页面。</li>
+<li>不完全的响应: 响应状态码 206，只返回局部的信息。</li>
+<li>除了 GET 请求外，如果匹配到作为一个已被定义的cache键名的响应。</li>
+</ul>
+<h2 id="缓存控制"><a href="#缓存控制" class="headerlink" title="缓存控制"></a>缓存控制</h2><p>HTTP/1.1定义的 <code>Cache-Control</code> 头用来区分对缓存机制的支持情况， 请求头和响应头都支持这个属性。</p>
+<ul>
+<li><code>no-store</code> 禁止进行缓存</li>
+<li><code>no-cache</code> 强制确认缓存</li>
+<li><code>public</code> 该响应可以被任何中间人(CDN，Nginx 代理)缓存</li>
+<li><code>private</code>  该响应是专用于某单个用户的，中间人不能缓存此响应</li>
+<li><code>max-age=&lt;seconds&gt;</code> 表示资源能够被缓存（不过期）的最大时间</li>
+<li><code>must-revalidate</code> 缓存在考虑使用一个陈旧的资源时，必须先验证它的状态（对浏览器本地缓存进行校验）</li>
+</ul>
+<h2 id="缓存过期"><a href="#缓存过期" class="headerlink" title="缓存过期"></a>缓存过期</h2><ol>
+<li>对于含有特定头信息的请求，会计算缓存寿命。比如 <code>Cache-control: max-age=N</code>，对于不含这个属性则会去查看是否包含<code>Expires</code>属性，通过比较Expires的值和头里面Date属性的值来判断是否缓存还有效。如果max-age和expires属性都没有，找找头里的Last-Modified信息。如果有，缓存的寿命就等于头里面Date的值减去Last-Modified的值除以10</li>
+<li>如果缓存经过上述判断过期，则请求附加一个If-None-Match头，然后发给服务器</li>
+<li>如果请求经过判断还未过期，则返回 304 (Not Modified)。如果过期，则将实体信息带回 （200 响应）</li>
+</ol>
+<h2 id="缓存验证"><a href="#缓存验证" class="headerlink" title="缓存验证"></a>缓存验证</h2><ul>
+<li>如果资源请求的响应头里含有ETag, 客户端可以在后续的请求的头中带上 If-None-Match 头来验证缓存</li>
+<li>Last-Modified 响应头可以作为一种弱校验器。说它弱是因为它只能精确到一秒。如果响应头里含有这个信息，客户端可以在后续的请求中带上 If-Modified-Since 来验证缓存</li>
+</ul>
+<h2 id="带Vary头的响应"><a href="#带Vary头的响应" class="headerlink" title="带Vary头的响应"></a>带Vary头的响应</h2><p>Vary HTTP 响应头决定了对于后续的请求头，如何判断是请求一个新的资源还是使用缓存的文件。<br>当缓存服务器收到一个请求，只有当前的请求和原始（缓存）的请求头跟缓存的响应头里的Vary都匹配，才能使用缓存的响应。<br>例如，使用Vary: User-Agent头，缓存服务器需要通过UA判断是否使用缓存的页面。如果需要区分移动端和桌面端的展示内容，利用这种方式就能避免在不同的终端展示错误的布局</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/Shino161">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#定义"><span class="toc-number">1.</span> <span class="toc-text">定义</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#私有缓存（浏览器缓存）"><span class="toc-number">1.1.</span> <span class="toc-text">私有缓存（浏览器缓存）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#共享缓存（代理缓存）"><span class="toc-number">1.2.</span> <span class="toc-text">共享缓存（代理缓存）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#缓存操作目标"><span class="toc-number">2.</span> <span class="toc-text">缓存操作目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#缓存控制"><span class="toc-number">3.</span> <span class="toc-text">缓存控制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#缓存过期"><span class="toc-number">4.</span> <span class="toc-text">缓存过期</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#缓存验证"><span class="toc-number">5.</span> <span class="toc-text">缓存验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#带Vary头的响应"><span class="toc-number">6.</span> <span class="toc-text">带Vary头的响应</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=cocoiii.com/2019/11/29/HTTP-缓存/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=cocoiii.com/2019/11/29/HTTP-缓存/&text=HTTP 缓存"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=cocoiii.com/2019/11/29/HTTP-缓存/&title=HTTP 缓存"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=cocoiii.com/2019/11/29/HTTP-缓存/&is_video=false&description=HTTP 缓存"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HTTP 缓存&body=Check out this article: cocoiii.com/2019/11/29/HTTP-缓存/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=cocoiii.com/2019/11/29/HTTP-缓存/&title=HTTP 缓存"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=cocoiii.com/2019/11/29/HTTP-缓存/&title=HTTP 缓存"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=cocoiii.com/2019/11/29/HTTP-缓存/&title=HTTP 缓存"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=cocoiii.com/2019/11/29/HTTP-缓存/&title=HTTP 缓存"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=cocoiii.com/2019/11/29/HTTP-缓存/&name=HTTP 缓存&description=&lt;blockquote&gt;
+&lt;p&gt;归纳一下 MDN 上关于 HTTP 缓存的理解 &lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Caching_FAQ&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Caching_FAQ&lt;/a&gt;  &lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;定义&#34;&gt;&lt;a href=&#34;#定义&#34; class=&#34;headerlink&#34; title=&#34;定义&#34;&gt;&lt;/a&gt;定义&lt;/h2&gt;&lt;p&gt;重用已获取的资源能够有效的提升网站与应用的性能。Web 缓存能够减少延迟与网络阻塞，进而减少显示某个资源所用的时间。借助 HTTP 缓存，Web 站点变得更具有响应性。&lt;/p&gt;
+&lt;h3 id=&#34;私有缓存（浏览器缓存）&#34;&gt;&lt;a href=&#34;#私有缓存（浏览器缓存）&#34; class=&#34;headerlink&#34; title=&#34;私有缓存（浏览器缓存）&#34;&gt;&lt;/a&gt;私有缓存（浏览器缓存）&lt;/h3&gt;&lt;p&gt;私有缓存只能用于单独用户。浏览器缓存拥有用户通过 HTTP 下载的所有文档。这些缓存为浏览过的文档提供向后/向前导航，保存网页，查看源码等功能，可以避免再次向服务器发起多余的请求&lt;/p&gt;
+&lt;h3 id=&#34;共享缓存（代理缓存）&#34;&gt;&lt;a href=&#34;#共享缓存（代理缓存）&#34; class=&#34;headerlink&#34; title=&#34;共享缓存（代理缓存）&#34;&gt;&lt;/a&gt;共享缓存（代理缓存）&lt;/h3&gt;&lt;p&gt;共享缓存可以被多个用户使用。例如，ISP 或你所在的公司可能会架设一个 web 代理来作为本地网络基础的一部分提供给用户。&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=cocoiii.com/2019/11/29/HTTP-缓存/&t=HTTP 缓存"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Shino161
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/Shino161">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
