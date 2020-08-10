@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Shino161">
 <meta property="og:description" content="Talk is cheap, show me the code  useState 和 useEffect 的使用在 React hook 里使用最频繁的应该就是这两个 hook 了，但是官网的一些简单的例子和说明总觉得非常心智模型（w所以这里用一些实际的例子来说明 useState 和 useEffect 的食用使用 useState 🚀useState 其实和 this.state 并无太">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-05-08T01:53:53.484Z">
+<meta property="og:updated_time" content="2020-08-10T08:06:19.100Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="React hook 的一些实践浅谈">
 <meta name="twitter:description" content="Talk is cheap, show me the code  useState 和 useEffect 的使用在 React hook 里使用最频繁的应该就是这两个 hook 了，但是官网的一些简单的例子和说明总觉得非常心智模型（w所以这里用一些实际的例子来说明 useState 和 useEffect 的食用使用 useState 🚀useState 其实和 this.state 并无太">
@@ -144,7 +144,11 @@
 <p>Talk is cheap, show me the code</p>
 </blockquote>
 <h2 id="useState-和-useEffect-的使用"><a href="#useState-和-useEffect-的使用" class="headerlink" title="useState 和 useEffect 的使用"></a>useState 和 useEffect 的使用</h2><p>在 React hook 里使用最频繁的应该就是这两个 hook 了，但是官网的一些简单的例子和说明<br>总觉得非常心智模型（w<br>所以这里用一些实际的例子来说明 useState 和 useEffect 的<del>食用</del>使用</p>
-<h4 id="useState-🚀"><a href="#useState-🚀" class="headerlink" title="useState 🚀"></a>useState 🚀</h4><p>useState 其实和 this.state 并无太大的区别，都是局部状态管理的一种方式。值得注意的一点<br>就是通过 setFoo() 是一种<strong>异步</strong>的状态更新过程。</p>
+<h4 id="useState-🚀"><a href="#useState-🚀" class="headerlink" title="useState 🚀"></a>useState 🚀</h4><p>useState 其实和 this.state 并无太大的区别，都是局部状态管理的一种方式。值得注意的是：</p>
+<ul>
+<li>通过 setState() 是一种<strong>看起来异步</strong>的状态更新过程。实际上在更新之前在合成事件和钩子函数中没法立马拿到更新后的值，形成了所谓的“异步”。</li>
+<li>setState 会进行批量更新，也就是如果 setSate 不同的值，在更新的时候也只会进行合并更新</li>
+</ul>
 <ul>
 <li>初始化状态</li>
 </ul>
